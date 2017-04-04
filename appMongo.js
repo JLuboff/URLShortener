@@ -3,7 +3,6 @@ var express = require("express");
 var mongo = require("mongodb").MongoClient;
 var port = process.env.PORT || 8080;
 var num = 0;
-var insertUrl;
 var app = express();
 
 function getRandNum(callback){
@@ -13,9 +12,11 @@ function getRandNum(callback){
         if(err) throw err;
         db.collection("Url").findOne({short_url: num}, {_id: 0, original_url: 1, short_url: 1}, function(err, data){
            if(err) throw err;
+           //Checks if any data is find with the current number, if not we send back num inside our callback which goes inside our app.get
            if(data === null){
            callback(num);
            }
+           //Else, a document is found, we rerun the function to create a new random number
            else {
            getRandNum(callback);
            }
@@ -24,19 +25,16 @@ function getRandNum(callback){
 });
 }
 
-//app.get(/\/(.*)/, function(req, res){
 app.get(/\/?(http:\/\/|https:\/\/)(.*)/, function(req, res){
      
 mongo.connect("mongodb://test:test@ds135800.mlab.com:35800/urlshortener", function(err, db){
     if(err) throw err;
+    //We make a call to our getRandNum function which will return our random number after it has been checked
     getRandNum(function(returnNum){
-    console.log("Num inside .get: " + num);
-     insertUrl = {
+    let insertUrl = {
         original_url: req.params[0] + req.params[1],
         short_url: num
     };
-    console.log(insertUrl);
-
     db.collection("Url").insert(insertUrl, function(err, data){
         if(err) throw err;
         console.log("Saved to DB");

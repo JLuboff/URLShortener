@@ -1,0 +1,15 @@
+body {
+  background: rgba(236, 240, 241,1.0);
+  margin-top: 50px;
+}
+
+div {
+  display: inline;
+  text-align: center;
+  color: #508ca4;
+  line-height: 10px;
+}
+
+.margin { 
+margin: 100px;
+}

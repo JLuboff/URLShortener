@@ -1,9 +1,12 @@
 "use strict";
 var express = require("express");
+var path = require("path");
 var mongo = require("mongodb").MongoClient;
 var port = process.env.PORT || 8080;
 var num = 0;
 var app = express();
+
+
 
 function getRandNum(callback){
   num = Math.floor(Math.random() * 9000) + 1000;
@@ -59,5 +62,7 @@ app.get(/\/\b\d{4}\b/, function(req, res){
     });
   });
 });
+
+app.use(express.static("public"));
 
 app.listen(port);

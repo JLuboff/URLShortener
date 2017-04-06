@@ -48,7 +48,7 @@ app.get(/\/?(http:\/\/|https:\/\/)(.*)/, function(req, res){
 });
 
 app.get(/\/\b\d{4}\b/, function(req, res){
-  mongo.connect("mongodb://test:test@ds135800.mlab.com:35800/urlshortener", function(err, db){
+  mongo.connect("mongodb://"+ process.env.username + ":" + process.env.password + "@ds135800.mlab.com:35800/urlshortener", function(err, db){
     if(err) throw err;
     let num = Number(req.url.slice(1));
     console.log(num);

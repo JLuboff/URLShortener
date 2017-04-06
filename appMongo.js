@@ -11,7 +11,7 @@ var app = express();
 function getRandNum(callback){
   num = Math.floor(Math.random() * 9000) + 1000;
 
-  mongo.connect("mongodb://"+ process.env.username + ":" + process.env.password + "@ds135800.mlab.com:35800/urlshortener", function(err, db){
+  mongo.connect("mongodb://"+ process.env.username + ":" + process.env.pass + "@ds135800.mlab.com:35800/urlshortener", function(err, db){
     if(err) throw err;
     db.collection("Url").findOne({short_url: num}, {_id: 0, original_url: 1, short_url: 1}, function(err, data){
       if(err) throw err;
@@ -30,7 +30,7 @@ function getRandNum(callback){
 
 app.get(/\/?(http:\/\/|https:\/\/)(.*)/, function(req, res){
 
-  mongo.connect("mongodb://"+ process.env.username + ":" + process.env.password + "@ds135800.mlab.com:35800/urlshortener", function(err, db){
+  mongo.connect("mongodb://"+ process.env.username + ":" + process.env.pass + "@ds135800.mlab.com:35800/urlshortener", function(err, db){
     if(err) throw err;
     //We make a call to our getRandNum function which will return our random number after it has been checked
     getRandNum(function(returnNum){
@@ -48,7 +48,7 @@ app.get(/\/?(http:\/\/|https:\/\/)(.*)/, function(req, res){
 });
 
 app.get(/\/\b\d{4}\b/, function(req, res){
-  mongo.connect("mongodb://"+ process.env.username + ":" + process.env.password + "@ds135800.mlab.com:35800/urlshortener", function(err, db){
+  mongo.connect("mongodb://"+ process.env.username + ":" + process.env.pass + "@ds135800.mlab.com:35800/urlshortener", function(err, db){
     if(err) throw err;
     let num = Number(req.url.slice(1));
     console.log(num);

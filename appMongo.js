@@ -39,7 +39,7 @@ app.get(/\/?(http:\/\/|https:\/\/)(.*)/, function(req, res){
         short_url: num
       };
       db.collection("Url").insert(insertUrl, function(err, data){
-        if(err) throw err;
+        if(err) res.send("Invalid Input. Please use format including http or https");
         res.send({"original_url": insertUrl.original_url, "short_url" : req.protocol + "://" + req.get("host") + "/" + insertUrl.short_url });
         db.close();
       });
@@ -53,7 +53,7 @@ app.get(/\/\b\d{4}\b/, function(req, res){
     let num = Number(req.url.slice(1));
     console.log(num);
     db.collection("Url").findOne({short_url: num}, {_id: 0, original_url: 1, short_url: 1}, function(err, data){
-      if(err) throw err;
+      if(err) res.send("Invalid Input. Please use 4 digit format");
       if(data === null)
       res.send("Invalid input.");
       else

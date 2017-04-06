@@ -28,6 +28,7 @@ function getRandNum(callback){
   });
 }
 
+//Our get request when the user provides an http or https url to shorten
 app.get(/\/?(http:\/\/|https:\/\/)(.*)/, function(req, res){
 
   mongo.connect("mongodb://" + process.env.user + ":" + process.env.pass + "@ds135800.mlab.com:35800/urlshortener", function(err, db){
@@ -38,6 +39,7 @@ app.get(/\/?(http:\/\/|https:\/\/)(.*)/, function(req, res){
         original_url: req.params[0] + req.params[1],
         short_url: num
       };
+      //Insert the insertUrl object into your database and then send the user the original and shortened urls
       db.collection("Url").insert(insertUrl, function(err, data){
         if(err) throw err;
         res.send({"original_url": insertUrl.original_url, "short_url" : req.protocol + "://" + req.get("host") + "/" + insertUrl.short_url });
@@ -47,11 +49,12 @@ app.get(/\/?(http:\/\/|https:\/\/)(.*)/, function(req, res){
   });
 });
 
+//Our get request when the user provides their 4 digit shortened url code
 app.get(/\/\b\d{4}\b/, function(req, res){
   mongo.connect("mongodb://" + process.env.user + ":" + process.env.pass + "@ds135800.mlab.com:35800/urlshortener", function(err, db){
     if(err) throw err;
+    //We get the number from the url removing the / and then look in our database for the record. We then use the redirect to send them to that website, or an error if the number is invalid.
     let num = Number(req.url.slice(1));
-    console.log(num);
     db.collection("Url").findOne({short_url: num}, {_id: 0, original_url: 1, short_url: 1}, function(err, data){
       if(err) throw err;
       if(data === null)
@@ -63,10 +66,12 @@ app.get(/\/\b\d{4}\b/, function(req, res){
   });
 });
 
+//For default page, we serve the public folder containing index.html
 app.use(express.static("public"));
 
+//For all other pages, we display an error providing a link back to the homepage
 app.get("/*", function(req, res){
-  res.send("Invalid input. Please provide either a proper URL beginning with http/https or a valid four digit number record.");
-})
+  res.send("Invalid input. Please provide either a proper URL beginning with http/https or a valid four digit number record. Please see <a href='./index.html'> The URL Emporium </a> for more instructions.");
+});
 
 app.listen(port);
